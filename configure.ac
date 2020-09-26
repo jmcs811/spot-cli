@@ -1,9 +1,9 @@
 AC_INIT([Spotify-CLI], 1.0)
 AC_PREREQ([2.69])
-AC_CONFIG_SRCDIR([main.c])
+AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([1.16.1 subdir-objects])
 AC_PROG_CC
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

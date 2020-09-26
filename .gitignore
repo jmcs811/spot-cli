@@ -13,10 +13,11 @@ Makefile.in
 /ylwrap
 .deps/
 build-aux
+spot_cli
 
 # http://www.gnu.org/software/autoconf
 
-autom4te.cache
+autom4te.cache/*
 /autoscan.log
 /autoscan-*.log
 /aclocal.m4
