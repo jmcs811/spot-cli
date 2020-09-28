@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "dbus-print-message.h"
 
 #define ALBUM "xesam:album"
 #define ARTIST "xesam:artist"

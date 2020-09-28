@@ -228,7 +228,6 @@ void send_dbus(int msg_type, char *property) {
       if (reply) {
          long sec, usec;
          if (msg_type == 1) {
-            // print_message (reply, print_reply_literal, sec, sec);
             parse_response(reply);
          }
          dbus_message_unref (reply);
@@ -314,7 +313,6 @@ void parse_response(DBusMessage *msg) {
          dbus_message_iter_next(&arrayIter);
       }
    }
-
 }
 
 void play_playback() {
