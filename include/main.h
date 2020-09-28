@@ -11,6 +11,11 @@
 #include <ctype.h>
 #include "dbus-print-message.h"
 
+#define ALBUM "xesam:album"
+#define ARTIST "xesam:artist"
+#define TITLE "xesam:title"
+#define URL "xesam:url"
+
 // protos
 void help();
 static int type_from_name (const char *arg);

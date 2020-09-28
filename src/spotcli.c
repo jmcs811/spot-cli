@@ -125,7 +125,6 @@ void append_args(char *c, DBusMessageIter *iter) {
    DBusMessageIter container_iter;
 
    type2 = type_from_name (arg);
-   printf("%p", iter);
 	append_arg (iter, type2, c);
 }
 
@@ -229,7 +228,8 @@ void send_dbus(int msg_type, char *property) {
       if (reply) {
          long sec, usec;
          if (msg_type == 1) {
-            print_message (reply, print_reply_literal, sec, sec);
+            // print_message (reply, print_reply_literal, sec, sec);
+            parse_response(reply);
          }
          dbus_message_unref (reply);
       }
@@ -237,11 +237,84 @@ void send_dbus(int msg_type, char *property) {
 
    dbus_message_unref (message);
    dbus_connection_unref (connection);
-   exit (0);
 }
 
-void parse_response() {
+int check_attribute(char* response) {
+   if (strcmp(response, ALBUM) == 0) {
+      return 1;
+   } else if (strcmp(response, ARTIST) == 0) {
+      return 1;
+   } else if (strcmp(response, TITLE) == 0) {
+      return 1;
+   } else if (strcmp(response, URL) == 0) {
+      return 1;
+   } else {
+      return 0;
+   }
+}
+
+void parse_response(DBusMessage *msg) {
    // TODO: parse the resp from show_artist/show_status
+   DBusMessageIter msgIter;
+   DBusMessageIter structIter;
+   dbus_message_iter_init(msg, &msgIter);
+   dbus_message_iter_recurse(&msgIter, &structIter);
+   if (DBUS_TYPE_STRING == dbus_message_iter_get_arg_type(&structIter)) {
+      char* str_response = NULL;
+      dbus_message_iter_get_basic(&structIter, &str_response);
+      printf("Status: %s\n", str_response);
+      return;
+   }
+
+   if (DBUS_TYPE_ARRAY == dbus_message_iter_get_arg_type(&structIter)) {
+      DBusMessageIter arrayIter;
+      dbus_message_iter_recurse(&structIter, &arrayIter);
+      for (int i = 0; i < 15; i++) {
+         if (DBUS_TYPE_DICT_ENTRY == dbus_message_iter_get_arg_type(&arrayIter)) {
+            DBusMessageIter dictIter;
+            dbus_message_iter_recurse(&arrayIter, &dictIter);
+            if (DBUS_TYPE_STRING == dbus_message_iter_get_arg_type(&dictIter)) {
+               char* str_response = NULL;
+               dbus_message_iter_get_basic(&dictIter, &str_response);
+               if (check_attribute(str_response) == 0) {
+                  dbus_message_iter_next(&arrayIter);
+                  continue;
+               }
+               if (strcmp(str_response, ARTIST) == 0) {
+                  str_response = "Artist";
+               } else if (strcmp(str_response, URL) == 0) {
+                  str_response = "URL";
+               } else if (strcmp(str_response, TITLE) == 0) {
+                  str_response = "Title";
+               } else if (strcmp(str_response, ALBUM) == 0) {
+                  str_response = "Album";
+               }
+               printf("%-6s -> ", str_response);
+               dbus_message_iter_next(&dictIter);
+               if (DBUS_TYPE_VARIANT == dbus_message_iter_get_arg_type(&dictIter)) {
+                  DBusMessageIter varIter;
+                  dbus_message_iter_recurse(&dictIter, &varIter);
+                  if (DBUS_TYPE_STRING == dbus_message_iter_get_arg_type(&varIter)) {
+                     char *test = NULL;
+                     dbus_message_iter_get_basic(&varIter, &test);
+                     printf("%-15s\n", test);
+                  }
+                  if (DBUS_TYPE_ARRAY == dbus_message_iter_get_arg_type(&varIter)) {
+                     DBusMessageIter varArrayIter;
+                     dbus_message_iter_recurse(&varIter, &varArrayIter);
+                     if (DBUS_TYPE_STRING == dbus_message_iter_get_arg_type(&varArrayIter)) {
+                        char *test = NULL;
+                        dbus_message_iter_get_basic(&varArrayIter, &test);
+                        printf("%-15s\n", test);
+                     }
+                  }
+               }
+            }
+         }
+         dbus_message_iter_next(&arrayIter);
+      }
+   }
+
 }
 
 void play_playback() {
