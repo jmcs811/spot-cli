@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "dbus-print-message.h"
 
 void help() {
    printf("####################\n");
@@ -17,35 +18,137 @@ void help() {
    printf("  play, pause, next, previous\n");
 }
 
+static int
+type_from_name (const char *arg)
+{
+  int type;
+  if (!strcmp (arg, "string"))
+    type = DBUS_TYPE_STRING;
+  else if (!strcmp (arg, "int16"))
+    type = DBUS_TYPE_INT16;
+  else if (!strcmp (arg, "uint16"))
+    type = DBUS_TYPE_UINT16;
+  else if (!strcmp (arg, "int32"))
+    type = DBUS_TYPE_INT32;
+  else if (!strcmp (arg, "uint32"))
+    type = DBUS_TYPE_UINT32;
+  else if (!strcmp (arg, "int64"))
+    type = DBUS_TYPE_INT64;
+  else if (!strcmp (arg, "uint64"))
+    type = DBUS_TYPE_UINT64;
+  else if (!strcmp (arg, "double"))
+    type = DBUS_TYPE_DOUBLE;
+  else if (!strcmp (arg, "byte"))
+    type = DBUS_TYPE_BYTE;
+  else if (!strcmp (arg, "boolean"))
+    type = DBUS_TYPE_BOOLEAN;
+  else if (!strcmp (arg, "objpath"))
+    type = DBUS_TYPE_OBJECT_PATH;
+  else
+    {
+      fprintf (stderr, "Unknown type \"%s\"\n", arg);
+      exit (1);
+    }
+  return type;
+}
+
+static void
+append_arg (DBusMessageIter *iter, int type, const char *value)
+{
+  dbus_uint16_t uint16;
+  dbus_int16_t int16;
+  dbus_uint32_t uint32;
+  dbus_int32_t int32;
+  dbus_uint64_t uint64;
+  dbus_int64_t int64;
+  double d;
+  unsigned char byte;
+  dbus_bool_t v_BOOLEAN;
+  dbus_bool_t ret;
+
+  switch (type) {
+   case DBUS_TYPE_BYTE:
+   byte = strtoul (value, NULL, 0);
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_BYTE, &byte);
+   break;
+
+   case DBUS_TYPE_DOUBLE:
+   d = strtod (value, NULL);
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_DOUBLE, &d);
+   break;
+
+   case DBUS_TYPE_INT16:
+   int16 = strtol (value, NULL, 0);
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_INT16, &int16);
+   break;
+
+   case DBUS_TYPE_UINT16:
+   uint16 = strtoul (value, NULL, 0);
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_UINT16, &uint16);
+   break;
+
+   case DBUS_TYPE_INT32:
+   int32 = strtol (value, NULL, 0);
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_INT32, &int32);
+   break;
+
+   case DBUS_TYPE_UINT32:
+   uint32 = strtoul (value, NULL, 0);
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_UINT32, &uint32);
+   break;
+
+   case DBUS_TYPE_INT64:
+   int64 = strtoll (value, NULL, 0);
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_INT64, &int64);
+   break;
+
+   case DBUS_TYPE_UINT64:
+   uint64 = strtoull (value, NULL, 0);
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_UINT64, &uint64);
+   break;
+
+   case DBUS_TYPE_STRING:
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_STRING, &value);
+   break;
+
+   case DBUS_TYPE_OBJECT_PATH:
+   ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_OBJECT_PATH, &value);
+   break;
+
+    case DBUS_TYPE_BOOLEAN:
+      if (strcmp (value, "true") == 0) {
+      v_BOOLEAN = TRUE;
+      ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_BOOLEAN, &v_BOOLEAN);
+	} else if (strcmp (value, "false") == 0) {
+      v_BOOLEAN = FALSE;
+      ret = dbus_message_iter_append_basic (iter, DBUS_TYPE_BOOLEAN, &v_BOOLEAN);
+	} else {
+	  fprintf (stderr, "Expected \"true\" or \"false\" instead of \"%s\"\n", value);
+	  exit (1);
+	}
+   break;
+
+   default:
+      fprintf (stderr, "Unsupported data type %c\n", (char) type);
+      exit (1);
+   }
+}
+
+void append_args(char *c, DBusMessageIter *iter) {
+   char *arg = "string";
+   int type2;
+   int secondary_type = DBUS_TYPE_INVALID;
+   int container_type = DBUS_TYPE_INVALID;
+   DBusMessageIter *target_iter;
+   DBusMessageIter container_iter;
+
+   type2 = type_from_name (arg);
+   printf("%p", iter);
+	append_arg (iter, type2, c);
+}
+
 void show_artist() {
    printf("This is the artist\n");
-   // DBusBusType type = DBUS_BUS_SESSION;
-   // DBusConnection  *connection;
-   // DBusError error;
-   // DBusMessage *msg;
-   // DBusMessageIter args;
-   // DBusPendingCall *pending;
-   // int message_type = DBUS_MESSAGE_TYPE_METHOD_CALL;
-   // char *client = "spotify";
-
-   // dbus_error_init(&error);
-   // connection = dbus_bus_get(type, &error);
-   // if (connection == NULL) {
-   //    fprintf(stderr, "Failed to open connection");
-   //    dbus_error_free(&error);
-   //    exit(1);
-   // }
-
-   // msg = dbus_message_new_method_call(NULL,
-   //                                    "/org/mpris/MediaPlayer2",
-   //                                    "/org/mpris/MediaPlayer2",
-   //                                    "");
-
-   // if (NULL == msg) { 
-   //    fprintf(stderr, "Message Null\n");
-   //    exit(1);
-   // }
-
    DBusConnection *connection;
    DBusError error;
    DBusMessage *message;
@@ -87,12 +190,11 @@ void show_artist() {
    if (message_type == DBUS_MESSAGE_TYPE_METHOD_CALL) {
       char *last_dot;
       last_dot = strrchr (name, '.');
-      if (last_dot == NULL)
-         {
-            fprintf (stderr, "Must use org.mydomain.Interface.Method notation, no dot in \"%s\"\n",
-                     name);
-            exit (1);
-         }
+      if (last_dot == NULL) {
+         fprintf (stderr, "Must use org.mydomain.Interface.Method notation, no dot in \"%s\"\n",
+                  name);
+         exit (1);
+      }
       //*last_dot = '\0';
       message = dbus_message_new_method_call (NULL,
                                                 path,
@@ -113,6 +215,10 @@ void show_artist() {
    }
 
    dbus_message_iter_init_append (message, &iter);
+
+   append_args("org.mpris.MediaPlayer2.Player", &iter);
+   append_args("Metadata", &iter);
+
    
    if (print_reply) {
       DBusMessage *reply;
@@ -127,14 +233,15 @@ void show_artist() {
          exit (1);
       }
       if (reply) {
-         // print_message (reply, print_reply_literal);
+         long sec, usec; 
+         print_message (reply, print_reply_literal, sec, sec);
          dbus_message_unref (reply);
       }
    }
+
    dbus_message_unref (message);
    dbus_connection_unref (connection);
    exit (0);
-
 }
 
 int main(int argc, char** argv) {
@@ -165,7 +272,6 @@ int main(int argc, char** argv) {
    } else {
       command = "PlayPause";
    }
-  
 
    DBusConnection *connection;
    DBusError error;
@@ -192,7 +298,7 @@ int main(int argc, char** argv) {
    if (address != NULL) {
       connection = dbus_connection_open (address, &error);
     
-  } else {
+   } else {
       connection = dbus_bus_get (type, &error);
    }
 
@@ -208,13 +314,12 @@ int main(int argc, char** argv) {
    if (message_type == DBUS_MESSAGE_TYPE_METHOD_CALL) {
       char *last_dot;
       last_dot = strrchr (name, '.');
-      if (last_dot == NULL)
-         {
-            fprintf (stderr, "Must use org.mydomain.Interface.Method notation, no dot in \"%s\"\n",
-                     name);
-            exit (1);
-         }
-      //*last_dot = '\0';
+      if (last_dot == NULL) {
+         fprintf (stderr, "Must use org.mydomain.Interface.Method notation, no dot in \"%s\"\n",
+                  name);
+         exit (1);
+      }
+
       message = dbus_message_new_method_call (NULL,
                                                 path,
                                                 name,

@@ -201,7 +201,7 @@ append_dict (DBusMessageIter *iter, int keytype, int valtype, const char *value)
 }
 
 static int
-type_from_name (const char *arg)
+type_from_name (const char *arg, char *appname)
 {
   int type;
   if (!strcmp (arg, "string"))
@@ -564,7 +564,7 @@ main (int argc, char *argv[])
       if (arg[0] == 0)
 	type2 = DBUS_TYPE_STRING;
       else
-	type2 = type_from_name (arg);
+	type2 = type_from_name (arg); //**
 
       if (container_type == DBUS_TYPE_DICT_ENTRY)
 	{
@@ -601,11 +601,11 @@ main (int argc, char *argv[])
 	  target_iter = &container_iter;
 	}
       else
-	target_iter = &iter;
+	target_iter = &iter; //* *
 
       if (container_type == DBUS_TYPE_ARRAY)
 	{
-	  append_array (target_iter, type2, c);
+	  append_array (target_iter, type2, c); 
 	}
       else if (container_type == DBUS_TYPE_DICT_ENTRY)
 	{
@@ -613,7 +613,7 @@ main (int argc, char *argv[])
 	  append_dict (target_iter, type2, secondary_type, c);
 	}
       else
-	append_arg (target_iter, type2, c);
+	append_arg (target_iter, type2, c); //**
 
       if (container_type != DBUS_TYPE_INVALID)
 	{
