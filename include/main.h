@@ -14,6 +14,10 @@
 #define ARTIST "xesam:artist"
 #define TITLE "xesam:title"
 #define URL "xesam:url"
+#define SPOTIFY_PLAYER "org.mpris.MediaPlayer2.spotify"
+#define DBUS_PROPERTIES "org.freedesktop.DBus.Properties"
+#define MEDIAPLAYER_PLAYER "org.mpris.MediaPlayer2.Player"
+#define MEDIAPLAYER "/org/mpris/MediaPlayer2"
 
 // protos
 void help();

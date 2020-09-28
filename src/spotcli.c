@@ -138,14 +138,14 @@ void send_dbus(int msg_type, char *property) {
    DBusMessageIter iter;
    int i;
    DBusBusType type = DBUS_BUS_SESSION;
-   const char *dest = "org.mpris.MediaPlayer2.spotify";
+   const char *dest = SPOTIFY_PLAYER;
    char* name;
    if (msg_type == 1) {
-      name = "org.freedesktop.DBus.Properties";
+      name = DBUS_PROPERTIES;
    } else {
-      name = "org.mpris.MediaPlayer2.Player";
+      name = MEDIAPLAYER_PLAYER;
    }
-   const char *path = "/org/mpris/MediaPlayer2";
+   const char *path = MEDIAPLAYER;
    int message_type = DBUS_MESSAGE_TYPE_METHOD_CALL;
    const char *type_str = NULL;
    const char *address = NULL;
@@ -208,7 +208,7 @@ void send_dbus(int msg_type, char *property) {
    dbus_message_iter_init_append (message, &iter);
 
    if (msg_type == 1) {
-      append_args("org.mpris.MediaPlayer2.Player", &iter);
+      append_args(MEDIAPLAYER_PLAYER, &iter);
       append_args(property, &iter);
    }
 
