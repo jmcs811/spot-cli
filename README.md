@@ -23,11 +23,14 @@ Command descriptions
 ```
 
 ## Installation
-1. Download or clone
-2. run autoreconf -i
-3. run ./configure
-4. run make
-5. run ./spot_cli
+1. Download tar from releases
+2. Install the spotify client
+3. Install dbus and dbus-devel
+4. Locate the dbus include and library dir (/usr/lib64/dbus-1.0/include/ & /usr/lib64/dbus-1.0/include/) 
+5. run ./configure
+6. run make
+7. Optional: make install (will install in /usr/local/bin by default)
+8. run ./spot_cli
 
 ## Dependencies
 - dbus
