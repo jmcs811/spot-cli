@@ -3,9 +3,9 @@ A simple command line interface to control spotify
 
 Useage:
 ```
-####################
-##### SPOT-CLI #####
-####################
+################################################
+################### SPOT-CLI ###################
+################################################
 Usage: 
   spot_cli [command]
 
@@ -20,6 +20,14 @@ Command descriptions
   prev   - plays previous track
   artist - displays info about the artist
   status - displays info about the playback status
+  shell  - Enter shell mode
+
+Shell Mode:
+ Shell mode allows you to keep the spot-cli tools
+ open. This means you can just type the commands with out
+ having to run the binary.
+To exit shell mode:
+ CTRL+C or close the terminal
 ```
 
 ## Installation
