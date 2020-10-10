@@ -20,8 +20,8 @@
 #define MEDIAPLAYER "/org/mpris/MediaPlayer2"
 
 // protos
-void help();
-char* process_command(char *command);
+char* help();
+char* process_command(char *command, int inShell);
 void start_shell();
 static int type_from_name (const char *arg);
 static void append_arg (DBusMessageIter *iter, int type, const char *value);

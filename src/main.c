@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
       for (int i = 0; command[i]; i++) {
          command[i] = tolower(command[i]);
       }
-      process_command(command);
+      process_command(command, 0);
    } else {
       send_dbus(0, "PlayPause");
       exit(EXIT_SUCCESS);

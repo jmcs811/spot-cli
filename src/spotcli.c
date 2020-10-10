@@ -1,6 +1,6 @@
 #include "main.h"
 
-void help() {
+char* help() {
    printf("################################################\n");
    printf("################### SPOT-CLI ###################\n");
    printf("################################################\n");
@@ -24,28 +24,34 @@ void help() {
    printf("To exit shell mode:\n");
    printf(" CTRL+C or close the terminal\n");
    printf("\n");
+   return NULL;
 }
 
-char* process_command(char *command) {
+char* process_command(char *command, int inShell) {
    char* result;
    if (strcmp(command, "play") == 0) {
-      result = play_playback();
+      return result = play_playback();
    } else if (strcmp(command, "pause") == 0) {
-      result = pause_playback();
+      return result = pause_playback();
    } else if (strcmp(command, "next") == 0) {
-      result = next_playback();
+      return result = next_playback();
    } else if (strcmp(command, "prev") == 0) {
-      result = prev_playback();
+      return result = prev_playback();
    } else if (strcmp(command, "artist") == 0) {
-      result = show_artist();
+      return result = show_artist();
    } else if (strcmp(command, "status") == 0) {
-      result = show_status();
+      return result = show_status();
    } else if (strcmp(command, "toggle") == 0) {
-      result = play_pause_playback();
+      return result = play_pause_playback();
    } else if (strcmp(command, "shell") == 0) {
-      start_shell();   
+      if (inShell == 0) {
+         start_shell();
+      } else {
+         result = "Already in shell";
+      }
+      
    } else {
-      help();
+      return result = help();
    }
    return result;
 }
@@ -56,9 +62,9 @@ void start_shell() {
       printf("Enter a command: ");
       fgets(command, 10, stdin);
       command[strlen(command) - 1] = '\0';
-      char *result = process_command(command);
+      char *result = process_command(command, 1);
       if (result != NULL) {
-         printf("%s\n", result);
+         printf("%s\n\n", result);
       }
       command[0] = '\0';
    }
