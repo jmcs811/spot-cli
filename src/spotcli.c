@@ -1,8 +1,71 @@
 #include "main.h"
 
+void help() {
+   printf("################################################\n");
+   printf("################### SPOT-CLI ###################\n");
+   printf("################################################\n");
+   printf("status - displays info about the playback status");
+   printf("Usage: \n");
+   printf("  spot_cli [command]\n\n");
+   printf("Avalilable Commands:\n");
+   printf("  play, pause, next, previous, artist, status\n\n");
+   printf("Command descriptions\n");
+   printf("  %-6s - %-10s", "NO ARG","toggle play/pause\n");
+   printf("  %-6s - %-10s", "play","starts playback\n");
+   printf("  %-6s - %-10s", "pause", "pauses playback\n");
+   printf("  %-6s - %-10s","next", "plays next track\n");
+   printf("  %-6s - %-10s",  "prev", "plays previous track\n");
+   printf("  %-6s - %-10s", "artist", "displays info about the artist\n");
+   printf("  %-6s - %-10s", "status", "displays info about the playback status\n");
+   printf("  %-6s - %-10s", "shell", "Enter shell mode\n");
+   printf("\nShell Mode:\n");
+   printf(" Shell mode allows you to keep the spot-cli tools\n");
+   printf(" open. This means you can just type the commands with out\n");
+   printf(" having to run the binary.\n");
+   printf("To exit shell mode:\n");
+   printf(" CTRL+C or close the terminal\n");
+   printf("\n");
+}
+
+char* process_command(char *command) {
+   char* result;
+   if (strcmp(command, "play") == 0) {
+      result = play_playback();
+   } else if (strcmp(command, "pause") == 0) {
+      result = pause_playback();
+   } else if (strcmp(command, "next") == 0) {
+      result = next_playback();
+   } else if (strcmp(command, "prev") == 0) {
+      result = prev_playback();
+   } else if (strcmp(command, "artist") == 0) {
+      result = show_artist();
+   } else if (strcmp(command, "status") == 0) {
+      result = show_status();
+   } else if (strcmp(command, "toggle") == 0) {
+      result = play_pause_playback();
+   } else if (strcmp(command, "shell") == 0) {
+      start_shell();   
+   } else {
+      help();
+   }
+   return result;
+}
+
+void start_shell() {
+   char command[10];
+   while (true) {
+      printf("Enter a command: ");
+      fgets(command, 10, stdin);
+      command[strlen(command) - 1] = '\0';
+      char *result = process_command(command);
+      if (result != NULL) {
+         printf("%s\n", result);
+      }
+      command[0] = '\0';
+   }
+}
 static int
-type_from_name (const char *arg)
-{
+type_from_name (const char *arg) {
   int type;
   if (!strcmp (arg, "string"))
     type = DBUS_TYPE_STRING;
@@ -26,17 +89,15 @@ type_from_name (const char *arg)
     type = DBUS_TYPE_BOOLEAN;
   else if (!strcmp (arg, "objpath"))
     type = DBUS_TYPE_OBJECT_PATH;
-  else
-    {
+  else {
       fprintf (stderr, "Unknown type \"%s\"\n", arg);
       exit (1);
-    }
+   }
   return type;
 }
 
 static void
-append_arg (DBusMessageIter *iter, int type, const char *value)
-{
+append_arg (DBusMessageIter *iter, int type, const char *value) {
   dbus_uint16_t uint16;
   dbus_int16_t int16;
   dbus_uint32_t uint32;
@@ -315,30 +376,37 @@ void parse_response(DBusMessage *msg) {
    }
 }
 
-void play_playback() {
+char* play_playback() {
    send_dbus(0, "Play");
+   return "Started Playback";
 }
 
-void pause_playback() {
+char* pause_playback() {
    send_dbus(0, "Pause");
+   return "Paused Playback";
 }
 
-void next_playback() {
+char* next_playback() {
    send_dbus(0, "Next");
+   return "Started next track";
 }
 
-void prev_playback() {
+char* prev_playback() {
    send_dbus(0, "Previous");
+   return "Started prev track";
 }
 
-void play_pause_playback() {
+char* play_pause_playback() {
    send_dbus(0, "PlayPause");
+   return "Toggled playback";
 }
-void show_artist() {
-   printf("This is the artist\n");
+char* show_artist() {
+   printf("Artist Info:\n");
    send_dbus(1, "Metadata");
+   return NULL;
 }
 
-void show_status() {
+char* show_status() {
    send_dbus(1, "PlaybackStatus");
+   return NULL;
 }
