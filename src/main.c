@@ -1,9 +1,10 @@
 #include "main.h"
 
 void help() {
-   printf("####################\n");
-   printf("##### SPOT-CLI #####\n");
-   printf("####################\n");
+   printf("################################################\n");
+   printf("################### SPOT-CLI ###################\n");
+   printf("################################################\n");
+   printf("status - displays info about the playback status");
    printf("Usage: \n");
    printf("  spot_cli [command]\n\n");
    printf("Avalilable Commands:\n");
