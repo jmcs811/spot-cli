@@ -57,16 +57,15 @@ char* process_command(char *command, int inShell) {
 }
 
 void start_shell() {
-   char command[10];
+   char command[20];
    while (true) {
       printf("Enter a command: ");
-      fgets(command, 10, stdin);
+      fgets(command, 20, stdin);
       command[strlen(command) - 1] = '\0';
       char *result = process_command(command, 1);
       if (result != NULL) {
          printf("%s\n\n", result);
       }
-      command[0] = '\0';
    }
 }
 static int
