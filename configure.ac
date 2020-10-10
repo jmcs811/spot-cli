@@ -1,4 +1,4 @@
-AC_INIT([Spotify-CLI], 1.0)
+AC_INIT([Spotify-CLI], 1.1)
 AC_PREREQ([2.69])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([config.h])
