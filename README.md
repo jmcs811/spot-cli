@@ -1,6 +1,9 @@
 # spotify-cli
 A simple command line interface to control spotify
 
+
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/spot-cli)
+
 Useage:
 ```
 ################################################
